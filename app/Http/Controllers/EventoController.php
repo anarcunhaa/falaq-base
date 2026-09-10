@@ -23,13 +23,15 @@ class EventoController extends Controller
      * AÇÃO ESPERADA:
      * Refatore a query para filtrar pelo evento, ordenar pelas mais recentes e paginar de 10 em 10.
      */
-    public function show($id)
+    public function show(Evento $evento)
     {
-        $evento = Evento::find($id);
+        // Filtra as perguntas do evento, ordena pelas mais recentes e pagina de 10 em 10
+        $perguntas = Pergunta::where('evento_id', $evento->id) 
+          ->with('user')
+          ->latest()
+          ->paginate(10); 
 
-        // ⚠ BUG LEGADO: Carrega TODOS os registros da tabela no PHP
-        $perguntas = Pergunta::all();
-
+        // Retorna a view injetando o evento e as perguntas paginadas
         return view('eventos.show', compact('evento', 'perguntas'));
     }
 
